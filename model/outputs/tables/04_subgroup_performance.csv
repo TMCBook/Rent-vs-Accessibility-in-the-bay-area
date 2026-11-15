@@ -1,0 +1,16 @@
+split,subgroup_type,group,n,small_n_caution,primary_metric,model_value,baseline_value,overall_model_value,gap_vs_overall,worse_than_overall,model_accuracy,model_precision_macro,model_recall_macro,model_auc
+val,county,Alameda,37,False,macro_f1,0.4714,0.4394,0.5235,-0.0521,True,0.8919,0.5,0.4459,
+val,county,Contra Costa,22,True,macro_f1,0.4545,0.4437,0.5235,-0.069,True,0.4545,0.5729,0.5729,0.5833
+val,county,Marin,4,True,macro_f1,0.5,0.2,0.5235,-0.0235,True,0.5,0.6667,0.6667,0.6667
+val,county,Napa,2,True,macro_f1,0.3333,0.3333,0.5235,-0.1902,True,0.5,0.25,0.5,0.0
+val,county,San Francisco,19,True,macro_f1,0.3214,0.3569,0.5235,-0.2021,True,0.4737,0.2368,0.5,0.6333
+val,county,San Mateo,19,True,macro_f1,0.3214,0.2841,0.5235,-0.2021,True,0.4737,0.3214,0.3214,0.2857
+val,county,Santa Clara,34,False,macro_f1,0.5143,0.2936,0.5235,-0.0092,True,0.5294,0.6058,0.5786,0.7071
+val,county,Solano,9,True,macro_f1,0.3077,0.4156,0.5235,-0.2158,True,0.4444,0.2222,0.5,0.4
+val,county,Sonoma,10,True,macro_f1,0.2308,0.0909,0.5235,-0.2927,True,0.3,0.15,0.5,0.4286
+val,access_tier,high access,76,False,macro_f1,0.5298,0.4077,0.5235,0.0063,False,0.6184,0.6259,0.5639,0.6406
+val,access_tier,low access,9,True,macro_f1,0.1818,0.25,0.5235,-0.3417,True,0.2222,0.5,0.1111,
+val,access_tier,mid access,71,False,macro_f1,0.5457,0.3826,0.5235,0.0222,False,0.5634,0.5885,0.6158,0.6572
+val,rent_tier,cheapest third,51,False,macro_f1,0.531,0.5423,0.5235,0.0075,False,0.549,0.6024,0.6466,0.6636
+val,rent_tier,middle third,52,False,macro_f1,0.563,0.3247,0.5235,0.0395,False,0.6154,0.5656,0.5789,0.6898
+val,rent_tier,priciest third,53,False,macro_f1,0.4628,0.2703,0.5235,-0.0607,True,0.5472,0.5575,0.5264,0.6243

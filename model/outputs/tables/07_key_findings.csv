@@ -1,0 +1,10 @@
+id,finding,number,source
+F1,logistic macro_f1 on val split,0.5235,03_model_vs_baseline.csv
+F2,baseline dummy macro_f1 on val split,0.4046,03_model_vs_baseline.csv
+F3,baseline persistence macro_f1 on val split,0.3882,03_model_vs_baseline.csv
+F4,baseline history_logistic macro_f1 on val split,0.4793,03_model_vs_baseline.csv
+F5,"logistic improvement over best baseline (macro_f1, val; positive = better)",0.0442,03_model_vs_baseline.csv
+F6,worst subgroup (n>=30): rent_tier=priciest third macro_f1 gap vs overall (n=53),-0.0607,04_subgroup_performance.csv
+F7,join 'zillow_research(zip-year) <- essentials(zip)' % left rows unmatched,0.0,02_join_audit.csv
+F8,join 'essentials(zip) <- indeed(city)' % left rows unmatched,9.56,02_join_audit.csv
+F9,join 'panel(zip-year) <- job features(zip via city)' % left rows unmatched,0.0,02_join_audit.csv

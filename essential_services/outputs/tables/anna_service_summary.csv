@@ -1,0 +1,8 @@
+service,places_in_bay_area,median_miles_to_nearest,pct_homes_within_1_mile,pct_homes_over_2_miles
+Bus or transit stop,20768,0.12,96.20,1.55
+Primary care doctor,27595,0.23,94.99,1.78
+Grocery store,2204,0.33,90.68,2.52
+Bank or credit union,1668,0.45,83.56,3.83
+Check cashing / money transfer,1725,0.46,84.35,4.41
+Pharmacy,1110,0.49,82.93,4.01
+Food bank,369,1.08,47.09,25.85

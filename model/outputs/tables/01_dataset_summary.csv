@@ -1,0 +1,4 @@
+dataset,rows,cols,date_col,date_min,date_max,pct_missing_cells,most_missing_col,most_missing_pct
+zillow_research,3269,8,month,2015-12-31 00:00:00,2026-09-30 00:00:00,6.79,rent,54.3
+essentials,293,21,,,,0.46,median_rent,9.56
+indeed,45877,8,date_posted,2025-01-01 00:40:05.445000+00:00,2026-09-20 05:10:34.995000+00:00,9.12,zipcode,42.12
