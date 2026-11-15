@@ -17,21 +17,26 @@ HAND_CHECK_COLS = ["item_id", "auto_value", "checked_value", "checker"]
 def hand_check_table(cfg: dict) -> pd.DataFrame:
     rows = []
     for f in sorted(cfg["paths"]["hand_checks"].glob("*.csv")):
-        d = pd.read_csv(f, dtype=str)
+        d = pd.read_csv(f, dtype=str, keep_default_na=False)  # keep "N/A" as written
         missing = set(HAND_CHECK_COLS) - set(d.columns)
         if missing:
             raise SystemExit(f"{f.name}: missing columns {sorted(missing)}")
         a, c = d["auto_value"].fillna("").str.strip().str.lower(), d["checked_value"].fillna("").str.strip().str.lower()
         if (c == "").any():
-            raise SystemExit(f"{f.name}: {int((c == '').sum())} rows have no checked_value yet")
+            raise SystemExit(f"{f.name}: {int((c == '').sum())} rows have no checked_value yet "
+                             f"(write N/A for a row the checker deliberately left unchecked)")
+        skipped = c.isin(["n/a", "na"])           # checker chose not to judge this row
+        a, c = a[~skipped], c[~skipped]
         an, cn = pd.to_numeric(a, errors="coerce"), pd.to_numeric(c, errors="coerce")
         # numbers agree within 1 cent / 0.01 (so "17.50" matches "17.5"); text must match exactly
         agree = ((an - cn).abs() <= 0.01).where(an.notna() & cn.notna(), a == c)
-        rows.append({"check": f.stem, "sample_size": len(d), "agreement_pct": round(100 * agree.mean(), 1),
+        rows.append({"check": f.stem, "sample_size": len(d), "n_checked": len(agree),
+                     "n_not_checked": int(skipped.sum()),
+                     "agreement_pct": round(100 * agree.mean(), 1),
                      "n_disagree": int((~agree).sum()),
                      "checkers": ";".join(sorted(d["checker"].dropna().unique())),
                      "source_file": f"docs/hand_checks/{f.name}"})
-    return pd.DataFrame(rows, columns=["check", "sample_size", "agreement_pct", "n_disagree", "checkers",
+    return pd.DataFrame(rows, columns=["check", "sample_size", "n_checked", "n_not_checked", "agreement_pct", "n_disagree", "checkers",
                                        "source_file"])
 
 
@@ -73,7 +78,7 @@ def key_findings(cfg: dict, hand: pd.DataFrame) -> pd.DataFrame:
             add(f"join '{r['step']}' % left rows unmatched", r["pct_left_unmatched"], "02_join_audit.csv")
 
     for _, r in hand.iterrows():
-        add(f"hand-check '{r['check']}' agreement % (n={r['sample_size']})", r["agreement_pct"],
+        add(f"hand-check '{r['check']}' agreement % (n={r['n_checked']} checked)", r["agreement_pct"],
             "06_hand_check_sample.csv")
     return pd.DataFrame(F, columns=["id", "finding", "number", "source"])
 

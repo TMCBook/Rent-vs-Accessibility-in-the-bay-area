@@ -8,3 +8,5 @@ F6,worst subgroup (n>=30): rent_tier=priciest third macro_f1 gap vs overall (n=5
 F7,join 'zillow_research(zip-year) <- essentials(zip)' % left rows unmatched,0.0,02_join_audit.csv
 F8,join 'essentials(zip) <- indeed(city)' % left rows unmatched,9.56,02_join_audit.csv
 F9,join 'panel(zip-year) <- job features(zip via city)' % left rows unmatched,0.0,02_join_audit.csv
+F10,hand-check 'indeed_pay_parse' agreement % (n=39 checked),100.0,06_hand_check_sample.csv
+F11,hand-check 'rent_growth_label' agreement % (n=30 checked),100.0,06_hand_check_sample.csv
