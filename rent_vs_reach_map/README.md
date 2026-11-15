@@ -24,8 +24,6 @@ To put it online, upload the whole folder to any static host (GitHub Pages, Netl
 
 ## Rebuild from raw data
 
-You only need this to change the data. To change the look, edit `scripts/template.html` and rerun step 3.
-
 1. Install Python packages:
    ```bash
    pip install duckdb pandas numpy scipy shapely
