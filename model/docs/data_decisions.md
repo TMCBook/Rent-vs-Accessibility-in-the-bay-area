@@ -1,7 +1,7 @@
 # Data decisions log
 
 Every label we create, heavy cleaning step, and join goes here, with row counts and a
-hand-checked sample. `run.py check` fails while any TODO marker remains in this file.
+hand-checked sample. `run.py check` fails while any open to-do marker (⚠ plus "to do" in capitals) remains in this file.
 
 ## 1. Geography unit and split
 - Geography unit (`config.yaml: geography_unit`): **zip**. Zillow's rent/value indexes, Anna's

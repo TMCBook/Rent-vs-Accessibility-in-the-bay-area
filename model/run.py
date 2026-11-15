@@ -66,13 +66,16 @@ def run_target(target: str) -> None:
 
 
 def clean_clone_check() -> None:
-    """§8.1: clone the committed repo to a temp dir and run `all` using this checkout's raw data."""
+    """Clone the committed repo to a temp dir and run `all` there, using this checkout's raw data.
+    Works when the pipeline lives in a subfolder (e.g. model/) of the repo."""
     raw = os.environ.get("DATATHON_RAW_DIR", str(ROOT / "data" / "raw"))
+    top = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip())
     with tempfile.TemporaryDirectory() as tmp:
         dest = Path(tmp) / "clone"
-        subprocess.run(["git", "clone", "--quiet", str(ROOT), str(dest)], check=True)
+        subprocess.run(["git", "clone", "--quiet", str(top), str(dest)], check=True)
         env = {**os.environ, "DATATHON_RAW_DIR": raw}
-        r = subprocess.run([PY, "run.py", "all"], cwd=dest, env=env)
+        r = subprocess.run([PY, "run.py", "all"], cwd=dest / ROOT.relative_to(top), env=env)
         print("\nCLEAN CLONE CHECK:", "PASS" if r.returncode == 0 else "FAIL")
         sys.exit(r.returncode)
 
