@@ -24,8 +24,8 @@ The forecast worked modestly while post-COVID rents were reverting, then failed 
 |---|---|---|
 | [`housing_costs/`](housing_costs/) | Typical rent and home value per ZIP from Zillow's indexes, rent trends since 2015, affordability score | Albert |
 | [`essential_services/`](essential_services/) | Distance from homes to groceries, pharmacies, doctors, banks, transit and food banks; access score per ZIP | Anna |
-| [`rent_vs_reach_map/`](rent_vs_reach_map/) | Interactive map: ZIPs shaded by rent, click for rent burden and access details | ⚠️ TODO name |
-| [`model/`](model/) | Rent-spike risk model, baselines, fairness analysis and help-first ranking; the reproducible pipeline | ⚠️ TODO name |
+| [`rent_vs_reach_map/`](rent_vs_reach_map/) | Interactive map: ZIPs shaded by rent, click for rent burden and access details | Jason Shorey |
+| [`model/`](model/) | Rent-spike risk model, baselines, fairness analysis and help-first ranking; the reproducible pipeline | Jason Shorey |
 
 Each folder has its own README or write-up:
 - `housing_costs/docs/albert_housing_costs.md`
