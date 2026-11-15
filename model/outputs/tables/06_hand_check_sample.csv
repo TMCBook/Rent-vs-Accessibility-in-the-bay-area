@@ -1,1 +1,3 @@
-check,sample_size,agreement_pct,n_disagree,checkers,source_file
+check,sample_size,n_checked,n_not_checked,agreement_pct,n_disagree,checkers,source_file
+indeed_pay_parse,40,39,1,100.0,0,Jason Shorey,docs/hand_checks/indeed_pay_parse.csv
+rent_growth_label,30,30,0,100.0,0,Jason Shorey,docs/hand_checks/rent_growth_label.csv

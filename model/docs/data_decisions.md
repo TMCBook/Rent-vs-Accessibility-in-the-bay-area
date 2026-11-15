@@ -83,13 +83,15 @@ See `outputs/tables/02_join_audit.csv`.
   them as "what kind of neighborhood this is", not as information available in 2017.
 
 ## 6. Hand-checked samples
-Samples are drawn by `python -m src.data.sample_hand_check` into `docs/hand_checks_todo/` with
-`checked_value` blank. A teammate fills them in and moves them to `docs/hand_checks/`.
+Samples were drawn by `python -m src.data.sample_hand_check` (seed 42) with `checked_value` blank,
+filled in by hand, and saved in `docs/hand_checks/`. Agreement is computed by `run.py tables` into
+`outputs/tables/06_hand_check_sample.csv` (numbers agree within 0.01; rows marked N/A are counted as
+not checked and left out of the rate).
 
 | check | sample size | sampled how | checked by | agreement | what we changed after |
 |---|---|---|---|---|---|
-| Indeed pay → hourly | 40 | random postings with pay, seed 42 | ⚠️ TODO | (from 06) | |
-| Rent-growth label | 30 | random train/val ZIP-years, seed 42 (no test rows) | ⚠️ TODO | (from 06) | |
+| Indeed pay → hourly | 40 (39 checked) | random postings with pay, seed 42 | Jason Shorey | 100% (39/39) | Nothing. One row ("$60 per class") has no hourly equivalent; the code leaves it unparsed and the checker marked it N/A |
+| Rent-growth label | 30 | random train/val ZIP-years, seed 42 (no test rows); checker computed growth from the two December ZORI rents and compared it with that year's top-third cutoff | Jason Shorey | 100% (30/30) | Nothing |
 | ZORI vs listing rents (Albert) | 205 ZIPs | all ZIPs with 10+ listings | Albert | r = 0.81 | used ZORI as rent source |
 
 ## 7. Live check (not the test set)
