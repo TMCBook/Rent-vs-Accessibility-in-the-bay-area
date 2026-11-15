@@ -6,6 +6,7 @@ from __future__ import annotations
 import pandas as pd
 
 COLUMNS = ["id", "split", "subgroup_type", "subgroup", "true", "pred", "score", "abs_error", "note"]
+# abs_error only means something for regression; classification tables leave it out.
 
 
 def failure_examples(preds: pd.DataFrame, master: pd.DataFrame, cfg: dict, split: str) -> pd.DataFrame:
@@ -33,4 +34,7 @@ def failure_examples(preds: pd.DataFrame, master: pd.DataFrame, cfg: dict, split
                              "true": r["y_true"], "pred": r["y_pred"], "score": r["score"],
                              "abs_error": r["abs_error"], "note": "",
                              **{c: r[c] for c in disp}})
-    return pd.DataFrame(rows) if rows else pd.DataFrame(columns=COLUMNS + disp)
+    out = pd.DataFrame(rows) if rows else pd.DataFrame(columns=COLUMNS + disp)
+    if t["type"] == "classification":
+        out = out.drop(columns=["abs_error"])
+    return out
