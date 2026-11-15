@@ -1,0 +1,23 @@
+{
+ "n_zips": 273,
+ "n_rentals": 73708,
+ "n_places": 46708,
+ "n_postings": 45920,
+ "pay_share": 85.0,
+ "region_wage": 25.64,
+ "rent_median": 3108.0,
+ "zip_rent_median": 2995.0,
+ "zip_access_median": 83.0,
+ "region_all_ess": 83.0,
+ "burden_region": 70.0,
+ "share_rent_affordable": 1.0,
+ "affordable_listings": 721,
+ "affordable_with_access": 87.0,
+ "groups": {
+  "underserved": 57,
+  "priced_out": 56,
+  "nodata": 54,
+  "both": 54,
+  "neither": 52
+ }
+}
