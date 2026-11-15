@@ -95,4 +95,4 @@ Only ZIPs at or below median rent are ranked, since that's where low-wage renter
 - [ ] Fill in the hand-check sheets in `docs/hand_checks_todo/` and move them to `docs/hand_checks/`.
 - [x] Rebuild Anna's access table from raw Places inside `src/data/clean_essentials.py` (matches her table exactly: `10_essentials_rebuild_check.csv`).
 - [x] Freeze features, then run `python run.py final` once (2026-11-15 18:00 UTC).
-- [ ] Write failure notes: fill the `note` column in `docs/failure_notes_worksheet.csv` (one row per ZIP; `note_template` is only a suggestion), then run `python -m src.eval.failure_notes apply` to copy them into `outputs/tables/05_failure_examples.csv`.
+- [ ] Write failure notes: run `python -m src.eval.failure_notes worksheet` to create `docs/failure_notes_worksheet.csv` (one row per ZIP; `note_template` is only a suggestion), fill its `note` column, then run `python -m src.eval.failure_notes apply` to copy the notes into `outputs/tables/05_failure_examples.csv`.
