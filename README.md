@@ -69,5 +69,5 @@ Results are reported by ZIP code only: no addresses, listings or reviewer names.
 
 ## Links
 
-- Slide deck: ⚠️ TODO
-- Video (≤ 5 min): ⚠️ TODO
+- Slide deck: ⚠️ TODO (Nash Wu)
+- Video (≤ 5 min): ⚠️ TODO (Nash Wu)
