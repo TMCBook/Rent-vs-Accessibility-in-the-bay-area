@@ -32,8 +32,19 @@ def main() -> None:
     m = pd.read_parquet(cfg["features"]["master_table"])
     m = m[~m["year"].isin(cfg["split"]["test_values"])]          # never sample test labels
     s = m.sample(30, random_state=cfg["seed"])
+    # Inputs a person needs: both December rents (straight from Zillow's file) and that year's
+    # top-third cutoff, i.e. the smallest growth among ZIPs ranked in the top third. The checker
+    # computes growth = rent_dec_next / rent_dec_t - 1 and compares it with the cutoff.
+    zr = pd.read_parquet(cfg["paths"]["interim"] / "zillow_research.parquet")
+    dec = zr[~zr["is_partial_year"]].pivot(index="zipcode", columns="year", values="rent")
+    cut = {}
+    for y in sorted(s["year"].unique()):
+        g = (dec[y + 1] / dec[y] - 1).dropna()
+        cut[y] = g[g.rank(pct=True) > 2 / 3].min()
     pd.DataFrame({"item_id": s["id"], "zipcode": s["zipcode"], "year_t": s["year"],
-                  "rent_dec_t": s["rent"].round(0), "next_growth_pct": (100 * s["next_rent_growth"]).round(2),
+                  "rent_dec_t": [round(dec.at[z, y], 2) for z, y in zip(s["zipcode"], s["year"])],
+                  "rent_dec_next": [round(dec.at[z, y + 1], 2) for z, y in zip(s["zipcode"], s["year"])],
+                  "top_third_cutoff_pct": [round(100 * cut[y], 2) for y in s["year"]],
                   "auto_value": s["target"].astype(str), "checked_value": "", "checker": ""}
                  ).to_csv(out_dir / "rent_growth_label.csv", index=False)
     print("wrote docs/hand_checks_todo/indeed_pay_parse.csv (40) and rent_growth_label.csv (30)")
