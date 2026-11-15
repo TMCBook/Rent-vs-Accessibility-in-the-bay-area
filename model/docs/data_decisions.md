@@ -15,7 +15,9 @@ hand-checked sample. `run.py check` fails while any TODO marker remains in this 
   checks that no training row comes from the validation/test period.
 - Model selection used rolling-origin CV on train+val years only (`src/models/select.py`,
   `outputs/tables/09_model_selection_cv.csv`): fit on years < y, score y, for y = 2019…2023.
-- Test set touched once, at final eval (`run.py final`), after features froze at ⚠️ TODO time.
+- Test set touched once, at final eval (`run.py final`), after features froze at **2026-11-15 18:00 UTC**.
+  `config.yaml: final_eval` is now `true`, so later runs re-report the same test results; features
+  and model settings must not change from here.
 - **Disclosure (test-period exposure):** while diagnosing the live check (section 7), a summary
   statistic over all years was printed: the Spearman correlation between a ZIP's growth in one year
   and the next. One of its rows covered the test period (2024 → 2025: +0.12). No model, feature or

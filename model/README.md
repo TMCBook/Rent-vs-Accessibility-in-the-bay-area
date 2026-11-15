@@ -29,7 +29,7 @@ python run.py all
 ```bash
 python -m pytest -q tests
 ```
-`run.py all` takes about 3 minutes (most of it reading the Zillow files) and rewrites everything in `outputs/`. The test year stays locked until `python run.py final`, which the team runs **once** at the end.
+`run.py all` takes about 3 minutes (most of it reading the Zillow files) and rewrites everything in `outputs/`. The test year was evaluated once, on 2026-11-15 (`final_eval: true` in `config.yaml` keeps those results in later runs). Don't change features or the model now.
 
 ## How it works, step by step
 
@@ -58,18 +58,18 @@ priority = P(rent spike next year) × (1 − access_score / 100) × renters
 ```
 Only ZIPs at or below median rent are ranked, since that's where low-wage renters live.
 
-## Results so far (validation year)
+## Results
 
-| Model | AUC |
-|---|---|
-| Logistic regression, all features | 0.560 |
-| Same model, rent history only | 0.474 |
-| Majority class | 0.500 |
-| Persistence | 0.344 |
+| Model | Validation AUC | **Test AUC (held out, run once)** |
+|---|---|---|
+| Logistic regression, all features | 0.560 | **0.328** |
+| Same model, rent history only | 0.474 | 0.316 |
+| Majority class | 0.500 | 0.500 |
+| Persistence | 0.344 | **0.589** |
 
-- Access and jobs data improve the forecast (rolling CV: AUC 0.634 vs. 0.578 with rent history only).
-- **The 2026 live check failed (AUC 0.153):** the model learned the 2020–2023 pattern of fast risers cooling off, and in 2026 they kept rising. Don't present the ranking as validated.
-- The model is weakest in low-access ZIPs (9 in validation), where Zillow has little rent data.
+- **The model fails on the test year, and persistence wins.** It learned the 2020–2023 pattern of fast risers cooling off; from 2024 on they kept rising. The 2026 live check shows the same (AUC 0.153).
+- Access and jobs data helped while the old pattern held (rolling CV: AUC 0.634 vs. 0.578 with rent history only).
+- The model is weakest in low-access and cheapest-rent ZIPs, where Zillow has little rent data. Don't present the ranking as validated.
 
 ## Inputs
 
@@ -94,5 +94,5 @@ Only ZIPs at or below median rent are ranked, since that's where low-wage renter
 
 - [ ] Fill in the hand-check sheets in `docs/hand_checks_todo/` and move them to `docs/hand_checks/`.
 - [x] Rebuild Anna's access table from raw Places inside `src/data/clean_essentials.py` (matches her table exactly: `10_essentials_rebuild_check.csv`).
-- [ ] Freeze features, then run `python run.py final` once.
+- [x] Freeze features, then run `python run.py final` once (2026-11-15 18:00 UTC).
 - [ ] Add notes to `outputs/tables/05_failure_examples.csv`.

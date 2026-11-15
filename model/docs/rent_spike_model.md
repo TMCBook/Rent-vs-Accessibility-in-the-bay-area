@@ -4,7 +4,7 @@
 
 This part of the project builds on Anna's essential-services table and Albert's housing-cost table. It adds a **trained predictive model** that forecasts which Bay Area ZIP codes are about to see the fastest rent increases. It then combines that forecast with access to essentials and the number of renters, to rank **where help would reach the most people at risk**.
 
-Every number below comes from a table written by `python run.py all`. Validation results only: the test year stays locked until the team's final run (`python run.py final`).
+Every number below comes from a table written by `python run.py all`. The held-out test year was evaluated **once**, on 2026-11-15 at 18:00 UTC, after features were frozen (`python run.py final`).
 
 ---
 
@@ -35,7 +35,7 @@ Every number below comes from a table written by `python run.py all`. Validation
 |---|---|---|
 | Train | 2016–2022 | 606 |
 | Validation | 2023 → 2024 | 156 |
-| Test (locked) | 2024 → 2025 | 166 |
+| Test (held out, evaluated once) | 2024 → 2025 | 166 |
 
 The split is **by time**, so the model never learns from the future (`tests/test_leakage.py` checks this). The model was chosen by rolling cross-validation on train and validation years only: train on years before *y*, score year *y*, for *y* = 2019 to 2023 (`outputs/tables/09_model_selection_cv.csv`).
 
@@ -52,38 +52,39 @@ The split is **by time**, so the model never learns from the future (`tests/test
 
 C = 0.1 and C = 1 tie on AUC. C = 0.1 was picked for its higher macro-F1 and stronger regularization on a small dataset. Neighbor-ZIP spillover features were also tried and didn't help, so they were left out.
 
-## Results (validation year, `outputs/tables/03_model_vs_baseline.csv`)
+## Results (`outputs/tables/03_model_vs_baseline.csv`)
 
-| Model | AUC | Macro-F1 |
-|---|---|---|
-| **Logistic regression, all features** | **0.560** | **0.524** |
-| Same model, rent history only | 0.474 | 0.479 |
-| Majority class | 0.500 | 0.405 |
-| Persistence ("last year's fastest risers stay fastest") | 0.344 | 0.388 |
+| Model | Validation AUC (2023 → 2024) | **Test AUC (2024 → 2025)** | **Test macro-F1** |
+|---|---|---|---|
+| Logistic regression, all features | 0.560 | **0.328** | **0.337** |
+| Same model, rent history only | 0.474 | 0.316 | 0.313 |
+| Majority class | 0.500 | 0.500 | 0.401 |
+| Persistence ("last year's fastest risers stay fastest") | 0.344 | **0.589** | **0.587** |
 
 **Key findings**
 
-1. **Adding access and jobs data improves the forecast.** Across five validation years, the full model averages AUC 0.634, versus 0.578 with rent history alone.
-2. **The signal is modest.** An AUC around 0.6 ranks ZIPs better than chance, but it can't pick out individual ZIPs with confidence.
-3. **Persistence fails before 2024.** From 2020 to 2023, ZIPs that rose fastest one year tended to slow down the next. Persistence scores below chance on every fold after 2019.
+1. **On the held-out test year, the model fails and persistence wins.** Its AUC of 0.328 means its ranking is mostly backwards; the simple persistence rule scores 0.589. The model is 0.25 macro-F1 below the best baseline (`07_key_findings.csv`, F5).
+2. **The cause is a regime shift.** From 2020 to 2023, ZIPs that rose fastest one year tended to slow down the next, and the model learned that. From 2024 on, fast risers kept rising. Persistence was below chance on every validation fold after 2019, then became the best predictor on the test year and in the 2026 live check.
+3. **Adding access and jobs data helped while the old pattern held.** Across five validation years, the full model averaged AUC 0.634 versus 0.578 with rent history alone, and it still edges the history-only model on the test year (0.328 vs. 0.316). That isn't enough to overcome learning the wrong direction.
+4. **Lesson for anyone using this:** a rent forecast trained on 2020–2023 shouldn't be trusted after the market turns. Retraining on recent years, or a model that detects which regime it's in, would be the next step.
 
 ## Fairness and error analysis
 
-`outputs/tables/04_subgroup_performance.csv`, macro-F1 on the validation year:
+`outputs/tables/04_subgroup_performance.csv`, macro-F1 on the **test year**:
 
 | Subgroup | n | Model | Persistence |
 |---|---|---|---|
-| High access | 76 | 0.530 | 0.408 |
-| Mid access | 71 | 0.546 | 0.383 |
-| **Low access** | **9** | **0.182** | 0.250 |
-| Cheapest third of rents | 51 | 0.531 | 0.542 |
-| Middle third | 52 | 0.563 | 0.325 |
-| Priciest third | 53 | 0.463 | 0.270 |
+| High access | 77 | 0.337 | 0.617 |
+| Mid access | 78 | 0.355 | 0.511 |
+| **Low access** | **11** | **0.083** | 0.450 |
+| **Cheapest third of rents** | **57** | **0.193** | 0.472 |
+| Middle third | 56 | 0.356 | 0.522 |
+| Priciest third | 53 | 0.467 | 0.581 |
 
-- **The model is worst where help matters most.** Only 9 low-access ZIPs have enough rent history to validate on, and the model does poorly on them. Zillow publishes rent indexes mainly for denser areas, so the communities this project cares about are the least represented.
-- **In the cheapest third of ZIPs, it is no better than persistence.**
+- **The model is worst where help matters most.** Its weakest groups are low-access ZIPs (macro-F1 0.083, only 11 ZIPs) and the cheapest third of rents (0.193, the worst group with 30+ ZIPs). Zillow publishes rent indexes mainly for denser areas, so the communities this project cares about are the least represented.
+- **Persistence beats the model in every access and rent group** on the test year.
 - County results are in the same table. Most counties have fewer than 30 rows and carry a small-sample caution.
-- Concrete mispredictions, with blank `note` columns for a teammate to explain, are in `outputs/tables/05_failure_examples.csv`.
+- Concrete test-year mispredictions, with blank `note` columns for a teammate to explain, are in `outputs/tables/05_failure_examples.csv`.
 
 ## Live check against 2026 (not the test set)
 
@@ -119,7 +120,7 @@ All cleaning steps, joins, label rules and hand-check plans are in `docs/data_de
 
 - [ ] Fill in the hand-check sheets in `docs/hand_checks_todo/` (40 parsed salaries, 30 rent-growth labels), then move them to `docs/hand_checks/`.
 - [x] Rebuild the access table from raw Places inside `src/data/clean_essentials.py`. Done; it matches Anna's saved table on all 293 ZIPs (`outputs/tables/10_essentials_rebuild_check.csv`).
-- [ ] Freeze features, then run `python run.py final` **once** to unlock the test year.
+- [x] Freeze features, then run `python run.py final` **once** to unlock the test year. Done 2026-11-15 18:00 UTC.
 - [ ] Add notes to `outputs/tables/05_failure_examples.csv`.
 
 ## How to reproduce

@@ -80,7 +80,7 @@ priority:
 
 # Flip to true ONCE, in the final ~6 hours, after features are frozen (or run `run.py final`).
 # Until then the test split is never predicted and 03_model_vs_baseline.csv shows test = LOCKED.
-final_eval: false
+final_eval: true   # test evaluated ONCE on 2026-11-15 18:00 UTC (run.py final); features frozen
 
 failure_examples:
   per_group: 10

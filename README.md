@@ -13,9 +13,10 @@ Bay Area cooks, aides and clerks are priced out of neighborhoods with good acces
 | Share of that worker's income the median rent takes | 70% (30% is the affordability line) | `rent_vs_reach_map/data/summary.json` |
 | Rental listings affordable at that wage | 1% (721 homes) | `rent_vs_reach_map/data/summary.json` |
 | ZIP codes that are cheaper than the median but underserved | 57 | `rent_vs_reach_map/data/summary.json` |
-| Rent-spike forecast, access + jobs data vs. rent history only (rolling CV AUC) | 0.634 vs. 0.578 | `model/outputs/tables/09_model_selection_cv.csv` |
+| Rent-spike forecast, access + jobs data vs. rent history only (rolling CV AUC, 2019–2023) | 0.634 vs. 0.578 | `model/outputs/tables/09_model_selection_cv.csv` |
+| Rent-spike forecast on the held-out test year (AUC): model vs. persistence rule | 0.328 vs. 0.589 | `model/outputs/tables/03_model_vs_baseline.csv` |
 
-The forecast is modest and failed a 2026 check because the rental market shifted after 2023. See `model/docs/rent_spike_model.md`.
+The forecast worked modestly while post-COVID rents were reverting, then failed once the market shifted back to momentum in 2024. See `model/docs/rent_spike_model.md`.
 
 ## What's in this repo
 
