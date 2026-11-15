@@ -1,4 +1,4 @@
-"""Audited joins. Every join in the project goes through `audited_merge` (CLAUDE.md §5):
+"""Audited joins. Every join in the project goes through `audited_merge`:
 logs left/right/matched counts and % unmatched to 02_join_audit.csv, and refuses
 silent many-to-many joins.
 """

@@ -21,7 +21,6 @@ To put it online, upload the whole folder to any static host (GitHub Pages, Netl
 | `scripts/build_data.py` | Raw datasets → `data/zips.json` and `data/summary.json` |
 | `scripts/render.py` | `data/*.json` + `scripts/template.html` → `index.html` |
 | `scripts/template.html` | Page design and code, with placeholders for the data |
-| `scripts/rent-vs-reach.artifact.html` | Same page in the format used for the Claude artifact |
 
 ## Rebuild from raw data
 

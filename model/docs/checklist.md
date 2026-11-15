@@ -1,6 +1,6 @@
 # Advanced Track checklist — evidence links
 
-Tick an item ONLY when the linked file proves it (CLAUDE.md §7). Judges read this list first.
+Tick an item ONLY when the linked file proves it. Judges read this list first.
 Track target: ⚠️ TODO(team) Advanced / Open
 
 | # | Requirement | Status | Evidence |

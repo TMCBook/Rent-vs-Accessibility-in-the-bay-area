@@ -1,4 +1,4 @@
-"""Integration checks (CLAUDE.md §8). Prints PASS / FAIL / MANUAL per item and writes
+"""Integration checks. Prints PASS / FAIL / MANUAL per item and writes
 outputs/check_report.md. `run.py check` runs `all` + pytest first, so item 1-3 reflect that run."""
 from __future__ import annotations
 

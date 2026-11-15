@@ -1,7 +1,7 @@
 """TEMPLATE — copy to src/data/clean_<name>.py, add <name> to config.yaml `datasets`,
 and add SCHEMAS["<name>"] in src/data/schemas.py.
 
-Rules (CLAUDE.md §5): never write to raw_dir; write exactly one parquet to interim_dir;
+Rules: never write to raw_dir; write exactly one parquet to interim_dir;
 print row counts before/after each filter so decisions can be logged in docs/data_decisions.md.
 """
 from __future__ import annotations

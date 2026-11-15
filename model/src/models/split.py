@@ -1,4 +1,4 @@
-"""Step `split`: THE one train/val/test split (CLAUDE.md §5). Fixed seed; saved to
+"""Step `split`: THE one train/val/test split. Fixed seed; saved to
 data/processed/split_ids.parquet with columns [<id_col>, split]. Optional group split
 (config split.group_col) keeps every row of a group in a single split to prevent leakage.
 """

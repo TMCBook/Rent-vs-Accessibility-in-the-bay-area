@@ -2,7 +2,7 @@
 
 06 reads every docs/hand_checks/*.csv with columns:
     item_id, auto_value, checked_value, checker      (one row per hand-checked item)
-07 derives every finding from the other tables — no hand-typed numbers (CLAUDE.md §7).
+07 derives every finding from the other tables — no hand-typed numbers.
 """
 from __future__ import annotations
 

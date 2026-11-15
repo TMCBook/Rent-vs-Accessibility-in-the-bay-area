@@ -1,4 +1,4 @@
-"""Draw hand-check samples for a teammate to verify (CLAUDE.md §5: hand-check a sample).
+"""Draw hand-check samples for a teammate to verify (Advanced Track: hand-check a sample).
 
 Writes docs/hand_checks_todo/<name>.csv with `auto_value` filled and `checked_value` BLANK.
 A person fills `checked_value` + `checker`, then moves the file to docs/hand_checks/ so
