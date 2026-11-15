@@ -1,0 +1,4 @@
+step,left_n,right_n,matched_n,result_n,pct_left_unmatched,how,keys
+zillow_research(zip-year) <- essentials(zip),2994,293,2994,2994,0.0,left,zipcode
+essentials(zip) <- indeed(city),293,159,265,293,9.56,left,city
+panel(zip-year) <- job features(zip via city),2994,293,2994,2994,0.0,left,zipcode

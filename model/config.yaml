@@ -1,0 +1,87 @@
+# Single source of truth for paths, seeds, split and task definition.
+# Shared file: changes go through the Integrator (Person 4).
+
+seed: 42
+
+paths:
+  raw: data/raw            # READ-ONLY. Override with env DATATHON_RAW_DIR.
+  interim: data/interim
+  processed: data/processed
+  tables: outputs/tables
+  figures: outputs/figures
+  models: outputs/models
+  hand_checks: docs/hand_checks
+
+# ⚠️ TODO(team): pick ONE geographic unit for all geo joins: zip | tract | city | none
+geography_unit: zip
+
+# Cleaners to run in `run.py data`. Each name maps to src/data/clean_<name>.py,
+# which must define `clean(raw_dir, interim_dir) -> Path` and a SCHEMA in src/data/schemas.py.
+# ⚠️ TODO(team): e.g. [places, reviews]
+datasets: [zillow_research, essentials, indeed]   # order matters: indeed uses essentials' city list
+
+# Feature builder: module in src/features/ exposing `build(cfg) -> pd.DataFrame` (the master table).
+# Use src.features.joins.audited_merge for every join so 02_join_audit.csv is filled.
+features:
+  builder: build_features
+  master_table: data/processed/master.parquet
+
+# Rent-spike risk: will a ZIP's rent growth over the next year be in the Bay Area's top third?
+# One row per ZIP x December of year t (src/features/build_features.py).
+task:
+  type: classification       # classification | regression
+  id_col: id
+  target_col: target         # 1 = next-year rent growth in top third of ZIPs that year
+  positive_label: 1          # binary only: label treated as positive for AUC
+  feature_cols: null         # null = all numeric columns except id/target/group/excluded
+  categorical_cols: [county] # one-hot encoded
+  # never features: the target's source (next_*), the calendar year (no trend extrapolation),
+  # raw levels duplicated by log_*, and today's listing count (used only for the help-first ranking)
+  exclude_cols: [year, next_rent_growth, next_growth_rank, rent, value, n_homes, n_rentals]
+  subgroup_cols: [county, access_tier, rent_tier]
+  display_cols: [zipcode, city, year, rent_g1, next_rent_growth]
+  small_n: 30                # subgroups smaller than this get a caution flag
+
+split:
+  test_size: 0.2
+  val_size: 0.2              # fraction of the whole dataset
+  group_col: null            # set to e.g. place_id / company / subreddit to group-split (no leakage)
+  # Time split (forecasting): train on t <= 2022 (targets through Dec 2023), validate on t = 2023
+  # (Dec 2023 -> Dec 2024), test on t = 2024 (Dec 2024 -> Dec 2025). Overrides the random split.
+  time_col: year
+  val_values: [2023]
+  test_values: [2024]
+  stratify: true             # classification only; ignored when group_col is set
+
+model:
+  # Chosen by rolling-origin CV on train+val years only (outputs/tables/09_model_selection_cv.csv):
+  # regularized logistic regression matched or beat gradient boosting and random forests.
+  name: logistic             # hist_gb | random_forest | logistic | ridge
+  params: {C: 0.1, class_weight: balanced}
+
+# dummy = majority class; persistence = "last year's fastest risers stay fastest" (top third of
+# last year's growth -> high risk); history_logistic = the main model using rent/value history
+# only, to show what the access + jobs data add.
+# The first non-dummy baseline is the comparison column in 04_subgroup_performance.csv.
+baselines: [dummy, persistence, history_logistic]
+baseline_params:
+  persistence: {column: rent_g1_rank}
+  history_logistic:
+    columns: [log_rent, log_value, rent_g1, rent_g2, rent_g3yr, value_g1, value_g2, value_g3yr,
+              rent_g1_rank, rent_g1_vs_region, value_g1_vs_region, rent_rank_in_year,
+              rent_vs_county, value_vs_county, price_to_rent, rent_years_observed]
+
+# Help-first ranking (src/models/priority.py -> 08_help_first_ranking.csv)
+priority:
+  forecast_year: 2025        # features at Dec 2025 -> P(high rent growth during 2026)
+  renters_col: n_rentals     # proxy for renter households: rental listings in the datathon data
+  affordable_only: true      # rank only ZIPs at or below the median rent (where low-wage renters live)
+  top_n: 25
+
+# Flip to true ONCE, in the final ~6 hours, after features are frozen (or run `run.py final`).
+# Until then the test split is never predicted and 03_model_vs_baseline.csv shows test = LOCKED.
+final_eval: false
+
+failure_examples:
+  per_group: 10
+  max_groups_per_subgroup: 5

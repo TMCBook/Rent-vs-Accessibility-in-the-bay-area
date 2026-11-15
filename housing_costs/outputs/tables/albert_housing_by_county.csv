@@ -1,0 +1,10 @@
+county,zip_codes_with_rent,typical_rent,income_needed_for_rent,rent_change_since_2019_pct,zip_codes_with_value,typical_home_value,value_change_since_2019_pct,price_to_rent_ratio
+San Francisco County,25,4751.0,190000.0,43.0,26,1406331.1,4.5,24.5
+Marin County,12,4235.0,169400.0,35.3,26,1500236.2,33.0,34.2
+San Mateo County,18,3936.2,157450.0,26.0,27,1585012.7,29.2,38.0
+Santa Clara County,48,3905.1,156200.0,26.9,57,1540697.7,42.6,31.8
+Contra Costa County,32,3015.8,120600.0,26.8,39,772049.1,26.3,21.1
+Napa County,6,2906.7,116250.0,27.7,8,898942.5,10.2,26.3
+Alameda County,45,2878.9,115200.0,18.2,47,1147273.6,21.0,29.1
+Sonoma County,14,2850.1,114000.0,27.3,32,800248.0,17.4,23.0
+Solano County,10,2552.3,102100.0,28.1,12,579505.3,26.1,18.9
