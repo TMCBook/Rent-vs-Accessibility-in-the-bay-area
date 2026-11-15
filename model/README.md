@@ -14,7 +14,12 @@ cd model
 ```bash
 pip install -r requirements.txt
 ```
-Put the Indeed file at `data/raw/indeed/indeed_job_listings.csv` (shared drive: Indeed Jobs), or point to a folder that has it:
+Put the shared-drive files in `data/raw/` like this, or point to a folder laid out the same way:
+```
+data/raw/indeed/indeed_job_listings.csv     (Indeed Jobs)
+data/raw/places/google_maps.csv             (Google Maps Places)
+data/raw/zillow/*.csv                       (Zillow Housing: all parts)
+```
 ```bash
 export DATATHON_RAW_DIR=/path/to/shared-drive-folders
 ```
@@ -24,7 +29,7 @@ python run.py all
 ```bash
 python -m pytest -q tests
 ```
-`run.py all` takes about a minute and rewrites everything in `outputs/`. The test year stays locked until `python run.py final`, which the team runs **once** at the end.
+`run.py all` takes about 3 minutes (most of it reading the Zillow files) and rewrites everything in `outputs/`. The test year stays locked until `python run.py final`, which the team runs **once** at the end.
 
 ## How it works, step by step
 
@@ -33,7 +38,7 @@ Each step is one command in `run.py`; `all` runs them in order.
 | Step | Code | What happens |
 |---|---|---|
 | 1. `data` | `src/data/clean_zillow_research.py` | Reads Zillow's rent index (ZORI) and home value index (ZHVI) per ZIP: every December 2015–2025, plus September 2026 |
-| | `src/data/clean_essentials.py` | Reads Anna's access table: access score and distance to grocery, pharmacy, doctor, transit, food bank per ZIP |
+| | `src/data/clean_essentials.py` | Rebuilds Anna's access table from raw Places + Zillow listings with her exact method: distance to grocery, pharmacy, doctor, transit, food bank per ZIP and the access score. Checks the result against her saved table → `10_essentials_rebuild_check.csv` |
 | | `src/data/clean_indeed.py` | Reads Indeed postings, keeps Bay Area ones, removes reposts, converts salary text to an hourly rate |
 | | `src/data/schemas.py`, `validate.py` | Checks each cleaned table has the agreed columns and types |
 | 2. `features` | `src/features/build_features.py` | Builds one row per **ZIP × year**. Features use only what was known that December: rent and value levels, growth over the last 1–3 years, rent vs. county, price-to-rent, plus access and jobs. **Label:** 1 if next year's rent growth is in the top third of ZIPs that year |
@@ -71,8 +76,9 @@ Only ZIPs at or below median rent are ranked, since that's where low-wage renter
 | File | From |
 |---|---|
 | `../housing_costs/data/zillow_research/zori_bay_area.csv`, `zhvi_bay_area.csv` | Albert (Zillow Research public downloads) |
-| `../essential_services/outputs/tables/anna_essentials_by_zip.csv` | Anna (built from Google Maps Places + Zillow listings) |
-| `data/raw/indeed/indeed_job_listings.csv` | **Not included** (2.1 GB): get it from the shared drive |
+| `data/raw/places/google_maps.csv`, `data/raw/zillow/*.csv` | Shared drive: Google Maps Places, Zillow Housing (**not included**, ~8 GB). Used to rebuild Anna's access table |
+| `../essential_services/outputs/tables/anna_essentials_by_zip.csv` | Anna's saved table, used only to check the rebuild |
+| `data/raw/indeed/indeed_job_listings.csv` | Shared drive: Indeed Jobs (**not included**, 2.1 GB) |
 
 ## Adding to the pipeline
 1. **Cleaner**: copy `src/data/clean_TEMPLATE.py` to `clean_<name>.py`, add `<name>` to
@@ -87,6 +93,6 @@ Only ZIPs at or below median rent are ranked, since that's where low-wage renter
 ## Still to do
 
 - [ ] Fill in the hand-check sheets in `docs/hand_checks_todo/` and move them to `docs/hand_checks/`.
-- [ ] Rebuild Anna's access table from raw Places inside `src/data/clean_essentials.py`.
+- [x] Rebuild Anna's access table from raw Places inside `src/data/clean_essentials.py` (matches her table exactly: `10_essentials_rebuild_check.csv`).
 - [ ] Freeze features, then run `python run.py final` once.
 - [ ] Add notes to `outputs/tables/05_failure_examples.csv`.

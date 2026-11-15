@@ -34,8 +34,10 @@ hand-checked sample. `run.py check` fails while any TODO marker remains in this 
 | value | float | Zillow Home Value Index (ZHVI), $ | null where Zillow publishes none |
 | is_partial_year | bool | True for the Sep 2026 row | never null |
 
-### essentials — owner: Anna, adapter by Integrator
-One row per ZIP (293). Columns as in `../essential_services/docs/anna_essential_services.md`:
+### essentials — owner: Anna (method), rebuilt from raw by Integrator
+`src/data/clean_essentials.py` is a port of Anna's notebook (cells 4–31): same category lists,
+filters and formulas, run on raw Places + Zillow listings. One row per ZIP (293). Columns as in
+`../essential_services/docs/anna_essential_services.md`:
 `access_score` (0–100, relative), `dist_*_mi` (median home's miles to nearest service),
 `count_*_1mi`, `bank_to_checkcash_ratio`, `n_homes`, `low_data`, `median_rent`, `n_rentals`
 (null → 0).
@@ -55,6 +57,9 @@ One row per ZIP (293). Columns as in `../essential_services/docs/anna_essential_
 | dataset | step | rows before | rows after | reason |
 |---|---|---|---|---|
 | zillow_research | drop ZIP-months with neither rent nor value | 3,300 | 3,269 | outer join of ZORI and ZHVI |
+| essentials (places) | drop permanently closed | 147,429 | 135,262 | closed places aren't access |
+| essentials (homes) | Zillow listings with coordinates + ZIP, deduped on zpid, 9 Bay Area counties | 149,005 | 147,395 | distances are measured from homes |
+| essentials (places) | in a service bucket and within 3 miles of a home | 58,091 | 55,439 | drop places outside the Bay Area |
 | indeed | location parses as "City, CA" | 140,816 | 138,895 | need a city to attach to ZIPs |
 | indeed | city or ZIP in the 9 Bay Area counties | 138,895 | 47,564 | file covers all of California |
 | indeed | dedupe title + company + location | 47,564 | 45,877 | reposts (dataset README) |
@@ -93,6 +98,7 @@ not checked and left out of the rate).
 | Indeed pay → hourly | 40 (39 checked) | random postings with pay, seed 42 | Jason Shorey | 100% (39/39) | Nothing. One row ("$60 per class") has no hourly equivalent; the code leaves it unparsed and the checker marked it N/A |
 | Rent-growth label | 30 | random train/val ZIP-years, seed 42 (no test rows); checker computed growth from the two December ZORI rents and compared it with that year's top-third cutoff | Jason Shorey | 100% (30/30) | Nothing |
 | ZORI vs listing rents (Albert) | 205 ZIPs | all ZIPs with 10+ listings | Albert | r = 0.81 | used ZORI as rent source |
+| Rebuilt access table vs Anna's saved table (automated, not a hand-check) | 293 ZIPs × 20 columns | every ZIP | `src/data/clean_essentials.py` | 100% identical (`outputs/tables/10_essentials_rebuild_check.csv`) | pipeline now rebuilds from raw instead of reading her CSV |
 
 ## 7. Live check (not the test set)
 `src/models/priority.py` compares the 2026 forecast with Zillow's Sep 2026 rents

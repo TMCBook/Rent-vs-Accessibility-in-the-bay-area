@@ -118,7 +118,7 @@ All cleaning steps, joins, label rules and hand-check plans are in `docs/data_de
 ## Still to do (team)
 
 - [ ] Fill in the hand-check sheets in `docs/hand_checks_todo/` (40 parsed salaries, 30 rent-growth labels), then move them to `docs/hand_checks/`.
-- [ ] Rebuild the access table from raw Places inside `src/data/clean_essentials.py`. It currently reads Anna's saved CSV.
+- [x] Rebuild the access table from raw Places inside `src/data/clean_essentials.py`. Done; it matches Anna's saved table on all 293 ZIPs (`outputs/tables/10_essentials_rebuild_check.csv`).
 - [ ] Freeze features, then run `python run.py final` **once** to unlock the test year.
 - [ ] Add notes to `outputs/tables/05_failure_examples.csv`.
 

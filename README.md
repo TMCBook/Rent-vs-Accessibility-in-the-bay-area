@@ -44,7 +44,7 @@ cd model
 ```bash
 pip install -r requirements.txt
 ```
-Put `indeed_job_listings.csv` from the shared drive in `model/data/raw/indeed/`, then:
+Put the shared-drive Indeed, Google Maps Places and Zillow files in `model/data/raw/` (layout in `model/README.md`), then:
 ```bash
 python run.py all
 ```
