@@ -40,7 +40,14 @@ def main() -> None:
     report_split = "test" if (preds["split"] == "test").any() else "val"
     master = pd.read_parquet(cfg["features"]["master_table"])
     write_table(subgroup_table(preds, master, cfg, report_split), cfg, "04_subgroup_performance.csv")
-    write_table(failure_examples(preds, master, cfg, report_split), cfg, "05_failure_examples.csv")
+    fe = failure_examples(preds, master, cfg, report_split)
+    # keep human notes across reruns: re-attach finished notes from the worksheet (failure_notes.py)
+    from src.eval.failure_notes import WORKSHEET
+    if WORKSHEET.exists() and len(fe):
+        ws = pd.read_csv(WORKSHEET, dtype=str, keep_default_na=False)
+        done = ws[(ws["note"].str.strip() != "") & ~ws["note"].str.contains("___", regex=False)]
+        fe["note"] = fe["id"].map(dict(zip(done["id"], done["note"].str.strip()))).fillna("")
+    write_table(fe, cfg, "05_failure_examples.csv")
 
 
 if __name__ == "__main__":
