@@ -74,4 +74,4 @@ Results are reported by ZIP code only: no addresses, listings or reviewer names.
 
 ## Acknowledgments
 
-Parts of this project were built with help from **Claude Opus 5.5** (Anthropic), an AI coding assistant. It helped write the data pipeline, the rent-spike model and evaluation code, the interactive map, and drafts of the documentation. The team chose the problem, reviewed the work, made the modeling decisions, and did the hand-checks by hand. The commit history shows which commits the assistant made.
+Parts of this project were built with help from **Claude Opus 5.5** (Anthropic).
