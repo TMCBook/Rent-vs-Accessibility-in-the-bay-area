@@ -21,7 +21,12 @@ def hand_check_table(cfg: dict) -> pd.DataFrame:
         missing = set(HAND_CHECK_COLS) - set(d.columns)
         if missing:
             raise SystemExit(f"{f.name}: missing columns {sorted(missing)}")
-        agree = (d["auto_value"].str.strip().str.lower() == d["checked_value"].str.strip().str.lower())
+        a, c = d["auto_value"].fillna("").str.strip().str.lower(), d["checked_value"].fillna("").str.strip().str.lower()
+        if (c == "").any():
+            raise SystemExit(f"{f.name}: {int((c == '').sum())} rows have no checked_value yet")
+        an, cn = pd.to_numeric(a, errors="coerce"), pd.to_numeric(c, errors="coerce")
+        # numbers agree within 1 cent / 0.01 (so "17.50" matches "17.5"); text must match exactly
+        agree = ((an - cn).abs() <= 0.01).where(an.notna() & cn.notna(), a == c)
         rows.append({"check": f.stem, "sample_size": len(d), "agreement_pct": round(100 * agree.mean(), 1),
                      "n_disagree": int((~agree).sum()),
                      "checkers": ";".join(sorted(d["checker"].dropna().unique())),
